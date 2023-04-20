@@ -1,25 +1,21 @@
 # Use NodeJS base image
 FROM node:13
 
-# Create app directory in Docker
+# Create app directory
 WORKDIR /usr/src/app
 
 # Install app dependencies by copying
 # package.json and package-lock.json
 COPY package*.json ./
 
-# Install dependencies in Docker
+# Install dependencies
 RUN npm ci
 
-# Copy app from local environment into the Docker image
+# Copy app source
 COPY . .
 
-# TypeScript compile
-RUN npm run tsc
-
-# Set the API's port number
+# Bind the port that the image will run on
 EXPOSE 8080
 
-# Define Docker’s behavior when the image is run
-# Run without TypeScript compile
-CMD ["npm", "run", "prod-no-tsc"]
+# Define the Docker image's behavior at runtime
+CMD [ "npm", "run", "prod" ]
