@@ -1,0 +1,41 @@
+version: "3"
+services:
+  udagramd-db:
+    image: postgres:latest
+    networks:
+      - udagram
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: "admin1234"
+      POSTGRES_USER: "admin"
+      POSTGRES_DB: "udagramdb"
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+        - postgres-db-data:/var/lib/postgresql/data
+  reverseproxy:
+    build:
+      context: .
+      dockerfile: reverseproxy/Dockerfile
+    image: reverseproxy
+    networks:
+      - udagram
+    ports:
+      - 8080:8080
+    restart: always
+    depends_on:
+      - udagramd-db
+      - backend-user
+      - backend-feed
+  frontend:
+    image: udagram-frontend:local
+    networks:
+      - udagram
+    ports:
+      - "8100:80"
+volumes:
+    postgres-db-data:
+        name: postgres-db-data
+networks:
+  udagram:
+    name: udagram
